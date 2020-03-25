@@ -1,10 +1,25 @@
 module "reflex_aws_kms_key_deletion_scheduled" {
   source           = "git::https://github.com/cloudmitigator/reflex-engine.git//modules/cwe_lambda?ref=v0.5.4"
   rule_name        = "KMSKeyDeletionScheduled"
-  rule_description = "TODO: Provide rule description"
+  rule_description = "Reflex Rule for detecting and preventing KMS Key deletion."
 
   event_pattern = <<PATTERN
-# TODO: Provide event pattern
+{
+  "source": [
+    "aws.kms"
+  ],
+  "detail-type": [
+    "AWS API Call via CloudTrail"
+  ],
+  "detail": {
+    "eventSource": [
+      "kms.amazonaws.com"
+    ],
+    "eventName": [
+      "ScheduleKeyDeletion"
+    ]
+  }
+}
 PATTERN
 
   function_name   = "KMSKeyDeletionScheduled"
@@ -16,10 +31,19 @@ PATTERN
     MODE      = var.mode
   }
   custom_lambda_policy = <<EOF
-# TODO: Provide required lambda permissions policy
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "kms:CancelKeyDeletion"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
 EOF
-
-
 
   queue_name    = "KMSKeyDeletionScheduled"
   delay_seconds = 0

@@ -8,21 +8,17 @@ from reflex_core import AWSRule
 
 
 class KMSKeyDeletionScheduled(AWSRule):
-    """ TODO: A description for your rule """
+    """ Reflex Rule for detecting and preventing KMS Key deletion. """
 
-    # TODO: Instantiate whatever boto3 client you'll need, if any.
-    # Example:
-    # client = boto3.client("s3")
+    client = boto3.client("kms")
 
     def __init__(self, event):
         super().__init__(event)
 
     def extract_event_data(self, event):
         """ Extract required event data """
-        # TODO: Extract any data you need from the triggering event.
-        #
-        # Example:
-        # self.bucket_name = event["detail"]["requestParameters"]["bucketName"]
+        self.key_id = event["detail"]["requestParameters"]["keyId"]
+        self.deletion_date = event["detail"]["responseParameters"]["deletionDate"]
 
     def resource_compliant(self):
         """
@@ -30,23 +26,26 @@ class KMSKeyDeletionScheduled(AWSRule):
 
         Return True if it is compliant, and False if it is not.
         """
-        # TODO: Implement a check for determining if the resource is compliant
+        # If the event occurred then the resource is not compliant
+        # and we need to take action. So always return False
+        return False
 
     def remediate(self):
         """
         Fix the non-compliant resource so it conforms to the rule
         """
-        # TODO (Optional): Fix the non-compliant resource. This only needs to 
-        # be implemented for rules that remediate non-compliant resources.
-        # Purely detective rules can omit this function.
+        self.client.cancel_key_deletion(KeyId=self.key_id)
 
     def get_remediation_message(self):
         """ Returns a message about the remediation action that occurred """
-        # TODO: Provide a human readable message describing what occured. This
-        # message is sent in all notifications.
-        #
-        # Example:
-        # return f"The S3 bucket {self.bucket_name} was unencrypted. AES-256 encryption was enabled."
+        message = (
+            f"The KMS key with ID {self.key_id} was scheduled for deletion "
+            f"on {self.deletion_date}."
+        )
+        if self.should_remediate():
+            message += " Deletion has been cancelled."
+
+        return message
 
 
 def lambda_handler(event, _):

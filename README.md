@@ -1,5 +1,5 @@
 # reflex-aws-kms-key-deletion-scheduled
-TODO: Write a brief description of your rule and what it does.
+Reflex Rule for detecting and preventing KMS Key deletion.
 
 ## Usage
 To use this rule either add it to your `reflex.yaml` configuration file:  
