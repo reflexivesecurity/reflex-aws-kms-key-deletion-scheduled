@@ -18,7 +18,7 @@ class KMSKeyDeletionScheduled(AWSRule):
     def extract_event_data(self, event):
         """ Extract required event data """
         self.key_id = event["detail"]["requestParameters"]["keyId"]
-        self.deletion_date = event["detail"]["responseParameters"]["deletionDate"]
+        self.deletion_date = event["detail"]["responseElements"]["deletionDate"]
 
     def resource_compliant(self):
         """
