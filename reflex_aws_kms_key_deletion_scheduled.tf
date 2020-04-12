@@ -1,5 +1,5 @@
 module "reflex_aws_kms_key_deletion_scheduled" {
-  source           = "git::https://github.com/cloudmitigator/reflex-engine.git//modules/cwe_lambda?ref=v0.5.7"
+  source           = "git::https://github.com/cloudmitigator/reflex-engine.git//modules/cwe_lambda?ref=v0.5.8"
   rule_name        = "KMSKeyDeletionScheduled"
   rule_description = "Reflex Rule for detecting and preventing KMS Key deletion."
 
