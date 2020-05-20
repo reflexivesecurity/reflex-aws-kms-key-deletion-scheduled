@@ -12,7 +12,9 @@ variable "mode" {
   description = "The mode that the Rule will operate in. Valid choices: DETECT | REMEDIATE"
   type        = string
   default     = "detect"
-}variable "cloudwatch_event_rule_id" {
+}
+
+variable "cloudwatch_event_rule_id" {
   description = "Easy name of CWE"
   type        = string
 }
